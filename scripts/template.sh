@@ -20,7 +20,7 @@ function install() {
     echo "Installed"
     echo "==========================="
     echo "You can now create a new server project by running"
-    echo "dotnet new formulaserver -n Contoso.Web"
+    echo "dotnet new formulaserver -n HelloWorld.Web"
 }
 
 function uninstall() {
