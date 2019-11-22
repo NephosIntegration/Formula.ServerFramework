@@ -13,18 +13,24 @@ function listCommands() {
 }
 
 function install() {
-    dotnet new -i ./templates/
+    dotnet new -i ./templates/Formula.MyApi/
+    dotnet new -i ./templates/Formula.Make/
     echo ""
     echo ""
     echo "==========================="
     echo "Installed"
     echo "==========================="
-    echo "You can now create a new server project by running"
-    echo "dotnet new formulaserver -n HelloWorld.Web"
+    echo ""
+    echo "Examples"
+    echo "dotnet new formula-api -n HelloWorld.Api"
+    echo "cd HelloWorld.Api"
+    echo "dotnet new formula-resource -na HelloWorld.Api -r Hello"
 }
 
 function uninstall() {
-    uninstallCmd=$(dotnet new -u | grep Formula.ServerFramework | grep dotnet)
+    uninstallCmd=$(dotnet new -u | grep Formula.Make | grep dotnet)
+    eval "$uninstallCmd"
+    uninstallCmd=$(dotnet new -u | grep Formula.MyApi | grep dotnet)
     eval "$uninstallCmd"
     echo "==========================="
     echo "Uninstalled"

@@ -5,6 +5,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Formula.SimpleRepo\Formula.SimpleRepo.csproj" />
+    <ProjectReference Include="..\..\Formula.SimpleAPI\Formula.SimpleAPI.csproj" />
   </ItemGroup>
 
 </Project>

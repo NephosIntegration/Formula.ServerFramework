@@ -1,0 +1,38 @@
+{
+  "$schema": "http://json.schemastore.org/template",
+  "author": "Joshua Williams",
+  "classifications": [ "Formula", "Code" ], 
+  "identity": "Formula.Resource",
+  "name": "Formula Framework Resource",
+  "shortName": "formula-resource",
+  "tags": {
+    "language": "C#",
+    "type": "item"
+  },
+  "symbols": {
+    "namespace": {
+      "type": "parameter",
+      "defaultValue": "Formula.MyApi",
+      "replaces": "Formula.MyApi"
+    },
+    "resource": {
+      "type": "parameter",
+      "defaultValue": "Todo",
+      "replaces": "ResourceName"
+    },
+    "rename": {
+      "type": "derived",
+      "valueSource": "resource",
+      "valueTransform": "ValueAfterLastDot",
+      "fileRename": "ResourceName",
+      "replaces": "ResourceName"
+    }
+  },
+  "forms": {
+    "ValueAfterLastDot": {
+      "identifier": "replace",
+      "pattern": "^.*\\.(?=[^\\.]+$)",
+      "replacement": ""
+    }
+  }
+}
