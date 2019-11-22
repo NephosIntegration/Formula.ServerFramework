@@ -1,4 +1,5 @@
 using System;
+using System.Data;
 using System.Linq;
 using System.Collections.Generic;
 using Microsoft.Extensions.Configuration;
@@ -9,7 +10,7 @@ namespace Formula.MyApi.Data.Repositories
 {
     public class ResourceNameRepository : RepositoryBase<ResourceName, ResourceName>
     {
-        public ResourceNameRepository(IConfiguration config) : base (config)
+        public ResourceNameRepository(IDbConnection connection) : base (connection)
         {
         }
     }
