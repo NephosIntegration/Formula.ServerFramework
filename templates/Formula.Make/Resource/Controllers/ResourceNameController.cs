@@ -1,10 +1,7 @@
 using System;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using Formula.SimpleAPI;
-using Formula.SimpleRepo;
 using Formula.MyApi.Data.Repositories;
 using Formula.MyApi.Data.Models;
 
