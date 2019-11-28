@@ -11,7 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Formula.SimpleRepo;
-using Formula.SimpleApi.Auth;
+using Formula.SimpleAPI.Auth;
 
 namespace Formula.MyApi
 {
@@ -29,7 +29,8 @@ namespace Formula.MyApi
         {
             services.AddControllers();
             services.AddRepositories();
-            services.AddAuth();
+            services.AddAuth(this.Configuration, typeof(Startup).Assembly.GetName().Name);
+            //services.AddIdentityServerAuth("http://localhost:5005", "MyAPI");
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -28,6 +28,21 @@ dotnet new webapi -o Formula.MyApi
 - Add project references to Formula.SimpleAPI in Formula.MyApi.csproj
 
 
+# Adding Authentication
+- In the Startup.cs (ConfigureServices function) enable authentication with the following;
+  - services.AddAuth(this.Configuration, typeof(Startup).Assembly.GetName().Name);
+- Run the migrations
+
+```bash
+dotnet tool install --global dotnet-ef --version 3.0.0
+dotnet ef migrations add initial_migration
+dotnet ef database update
+```
+
+# Packages / Projects Used
+- [Microsoft.VisualStudio.Web.CodeGeneration.Tools](https://github.com/aspnet/scaffolding)
+- [Microsoft.EntityFrameworkCore.Tools.DotNet](https://github.com/aspnet/EntityFramework.Tools)
+
 
 # Relavant Links
 - [Custom templates for dotnet new](https://docs.microsoft.com/en-us/dotnet/core/tools/custom-templates)
