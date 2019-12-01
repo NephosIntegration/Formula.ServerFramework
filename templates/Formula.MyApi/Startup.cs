@@ -11,7 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Formula.SimpleRepo;
-using Formula.SimpleAPI.Auth;
+using Formula.SimpleAuth;
 
 namespace Formula.MyApi
 {
@@ -29,7 +29,11 @@ namespace Formula.MyApi
         {
             services.AddControllers();
             services.AddRepositories();
-            services.AddAuth(this.Configuration, typeof(Startup).Assembly.GetName().Name);
+
+            // Add's authentication using local database (requires running identity migrations)
+            services.AddLocalAuth(this.Configuration, typeof(Startup).Assembly.GetName().Name);
+
+            // Add's authentication using identity server (OAuth 2)
             //services.AddIdentityServerAuth("http://localhost:5005", "MyAPI");
         }
 
