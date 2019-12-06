@@ -4,13 +4,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Formula.SimpleRepo;
+using Formula.SimpleMembership;
+using Formula.SimpleAuthServer;
 
 namespace Formula.MyApi
 {
@@ -26,8 +25,24 @@ namespace Formula.MyApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors( options =>
+            {
+                options.AddPolicy( "AllowCors", builder =>
+                {
+                    builder.AllowAnyOrigin()
+                        .AllowAnyHeader()                        
+                        .AllowAnyMethod();
+                });
+            });
+
             services.AddControllers();
             services.AddRepositories();
+
+            // Uncomment in order to use simple cookie based local storage authentication
+            //services.AddSimpleMembership(this.Configuration, typeof(Startup).Assembly.GetName().Name);
+
+            // Uncomment in order to use OAuth2 / OpenID Connect server
+            //services.AddSimpleAuthServer(this.Configuration);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -41,6 +56,11 @@ namespace Formula.MyApi
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseCors("AllowCors");
+
+            // Uncomment in order to use OAuth2 / OpenID Connect server
+            //app.UseSimpleAuthServer();
 
             app.UseAuthorization();
 

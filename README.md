@@ -28,6 +28,10 @@ dotnet new webapi -o Formula.MyApi
 - Add project references to Formula.SimpleAPI in Formula.MyApi.csproj
 
 
+# Packages / Projects Used
+- [Microsoft.VisualStudio.Web.CodeGeneration.Tools](https://github.com/aspnet/scaffolding)
+- [Microsoft.EntityFrameworkCore.Tools.DotNet](https://github.com/aspnet/EntityFramework.Tools)
+
 
 # Relavant Links
 - [Custom templates for dotnet new](https://docs.microsoft.com/en-us/dotnet/core/tools/custom-templates)
