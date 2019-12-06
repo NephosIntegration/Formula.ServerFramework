@@ -9,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Formula.SimpleRepo;
 using Formula.SimpleMembership;
+using Formula.SimpleAuthServer;
 
 namespace Formula.MyApi
 {
@@ -39,6 +40,9 @@ namespace Formula.MyApi
 
             // Uncomment in order to use simple cookie based local storage authentication
             //services.AddSimpleMembership(this.Configuration, typeof(Startup).Assembly.GetName().Name);
+
+            // Uncomment in order to use OAuth2 / OpenID Connect server
+            //services.AddSimpleAuthServer(this.Configuration);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -54,6 +58,9 @@ namespace Formula.MyApi
             app.UseRouting();
 
             app.UseCors("AllowCors");
+
+            // Uncomment in order to use OAuth2 / OpenID Connect server
+            //app.UseSimpleAuthServer();
 
             app.UseAuthorization();
 
