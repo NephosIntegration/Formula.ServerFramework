@@ -46,7 +46,7 @@ namespace Formula.MyApi
             //services.AddSimpleAuthServer(this.Configuration);
 
             // Uncomment in order to use resource server
-            //services.AddSimpleResourceServer(this.Configuration, SimpleResourceServerConfigDemo.Get());
+            //services.AddSimpleResourceServer(this.Configuration);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
