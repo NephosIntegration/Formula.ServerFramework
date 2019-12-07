@@ -10,6 +10,7 @@ using Microsoft.Extensions.Hosting;
 using Formula.SimpleRepo;
 using Formula.SimpleMembership;
 using Formula.SimpleAuthServer;
+using Formula.SimpleResourceServer;
 
 namespace Formula.MyApi
 {
@@ -43,6 +44,9 @@ namespace Formula.MyApi
 
             // Uncomment in order to use OAuth2 / OpenID Connect server
             //services.AddSimpleAuthServer(this.Configuration);
+
+            // Uncomment in order to use resource server
+            //services.AddSimpleResourceServer(this.Configuration, SimpleResourceServerConfigDemo.Get());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -62,6 +66,10 @@ namespace Formula.MyApi
             // Uncomment in order to use OAuth2 / OpenID Connect server
             //app.UseSimpleAuthServer();
 
+            // Uncomment in order to use resource server
+            //app.UseSimpleResourceServer();
+
+            // Adds the authorization middleware to make sure, our API endpoint cannot be accessed by anonymous clients.
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
