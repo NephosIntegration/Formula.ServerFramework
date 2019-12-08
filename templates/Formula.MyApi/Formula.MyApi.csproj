@@ -7,8 +7,8 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Formula.SimpleRepo\Formula.SimpleRepo.csproj" />
     <ProjectReference Include="..\..\Formula.SimpleAPI\Formula.SimpleAPI.csproj" />
-    <ProjectReference Include="..\..\Formula.SimpleMembership\Formula.SimpleMembership.csproj" />
     <ProjectReference Include="..\..\Formula.SimpleAuthServer\Formula.SimpleAuthServer.csproj" />
+    <ProjectReference Include="..\..\Formula.SimpleAuthServerUI\Formula.SimpleAuthServerUI.csproj" />
     <ProjectReference Include="..\..\Formula.SimpleResourceServer\Formula.SimpleResourceServer.csproj" />
   </ItemGroup>
 

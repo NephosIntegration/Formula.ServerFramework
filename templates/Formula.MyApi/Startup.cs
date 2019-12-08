@@ -7,9 +7,12 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Formula.SimpleRepo;
-using Formula.SimpleMembership;
 using Formula.SimpleAuthServer;
+using Formula.SimpleAuthServerUI;
 using Formula.SimpleResourceServer;
 
 namespace Formula.MyApi
@@ -22,6 +25,34 @@ namespace Formula.MyApi
         }
 
         public IConfiguration Configuration { get; }
+
+        protected IServiceCollection SetAuthorizationDefaults(IServiceCollection services)
+        {
+            // As a last step allow "authorization" on the following schemes.
+            // (Cookies or JWT)
+            // Any controller tagged with [Authorize], can be accessed by the 
+            // Schemes in the following list.
+            // Otherwise be explicit on your routes by specifying the 
+            // scheme or policy.
+            // 
+            // [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+            // [Authorize(Policy = "TrialUser")]
+            // 
+            // If we are running Auth Server and Resource Server and 
+            // https://docs.microsoft.com/en-us/aspnet/core/security/authorization/limitingidentitybyscheme?view=aspnetcore-3.1
+            services.AddAuthorization( options => {
+                options.DefaultPolicy = (new AuthorizationPolicyBuilder(
+                    // Used for simple OAuth2 / JWT Bearer schemes (Simple Auth Server)
+                    JwtBearerDefaults.AuthenticationScheme,
+
+                    // The following two are used when adding Auth Server UI to the project
+                    // And want to allow OpenID Connect Challenges over Cookies
+                    CookieAuthenticationDefaults.AuthenticationScheme
+                )).RequireAuthenticatedUser().Build();
+            });
+
+            return services;
+        }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -39,14 +70,14 @@ namespace Formula.MyApi
             services.AddControllers();
             services.AddRepositories();
 
-            // Uncomment in order to use simple cookie based local storage authentication
-            //services.AddSimpleMembership(this.Configuration, typeof(Startup).Assembly.GetName().Name);
-
             // Uncomment in order to use OAuth2 / OpenID Connect server
             //services.AddSimpleAuthServer(this.Configuration);
+            //services.AddSimpleAuthServerUI();
 
             // Uncomment in order to use resource server
             //services.AddSimpleResourceServer(this.Configuration);
+
+            this.SetAuthorizationDefaults(services);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -65,6 +96,7 @@ namespace Formula.MyApi
 
             // Uncomment in order to use OAuth2 / OpenID Connect server
             //app.UseSimpleAuthServer();
+            //app.UseSimpleAuthServerUI();
 
             // Uncomment in order to use resource server
             //app.UseSimpleResourceServer();
@@ -75,6 +107,7 @@ namespace Formula.MyApi
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapDefaultControllerRoute();
             });
         }
     }
