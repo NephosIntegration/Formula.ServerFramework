@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Reflection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -57,6 +58,8 @@ namespace Formula.MyApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            var migrationsAssembly = typeof(Startup).GetTypeInfo().Assembly.GetName().Name;
+
             services.AddCors( options =>
             {
                 options.AddPolicy( "AllowCors", builder =>
@@ -71,7 +74,7 @@ namespace Formula.MyApi
             services.AddRepositories();
 
             // Uncomment in order to use OAuth2 / OpenID Connect server
-            //services.AddSimpleAuthServer(this.Configuration);
+            //services.AddSimpleAuthServer(this.Configuration, migrationsAssembly);
             //services.AddSimpleAuthServerUI();
 
             // Uncomment in order to use resource server
@@ -95,7 +98,7 @@ namespace Formula.MyApi
             app.UseCors("AllowCors");
 
             // Uncomment in order to use OAuth2 / OpenID Connect server
-            //app.UseSimpleAuthServer();
+            //app.UseSimpleAuthServer(this.Configuration);
             //app.UseSimpleAuthServerUI();
 
             // Uncomment in order to use resource server
