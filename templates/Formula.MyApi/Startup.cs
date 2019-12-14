@@ -15,6 +15,7 @@ using Formula.SimpleRepo;
 using Formula.SimpleAuthServer;
 using Formula.SimpleAuthServerUI;
 using Formula.SimpleResourceServer;
+using Formula.SimpleMembership;
 
 namespace Formula.MyApi
 {
@@ -73,8 +74,16 @@ namespace Formula.MyApi
             services.AddControllers();
             services.AddRepositories();
 
+            // Uncomment in order to use AspNetIdentity
+            //services.AddSimpleMembership(this.Configuration, migrationsAssembly);
+
             // Uncomment in order to use OAuth2 / OpenID Connect server
-            //services.AddSimpleAuthServer(this.Configuration, migrationsAssembly);
+            //var identityServerBuilder = services.AddSimpleAuthServer(this.Configuration, migrationsAssembly);
+
+            // Uncomment the following line in order to be able to use AspNetIdentity within the authorization server
+            //identityServerBuilder.AddAspNetIdentity<ApplicationUser>();
+
+            // Uncomment in order to provide the views necessary to view work with the identity server
             //services.AddSimpleAuthServerUI();
 
             // Uncomment in order to use resource server
