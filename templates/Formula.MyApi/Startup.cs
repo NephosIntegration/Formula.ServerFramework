@@ -11,6 +11,8 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.AspNetCore.Identity;
 using Formula.SimpleRepo;
 using Formula.SimpleAuthServer;
 using Formula.SimpleAuthServerUI;
@@ -28,8 +30,47 @@ namespace Formula.MyApi
 
         public IConfiguration Configuration { get; }
 
-        protected IServiceCollection SetAuthorizationDefaults(IServiceCollection services)
+        // Will add authentication and authorization to the project
+        protected void AddAuth(IServiceCollection services)
         {
+            var migrationsAssembly = typeof(Startup).GetTypeInfo().Assembly.GetName().Name;
+
+            // Uncomment in order to use OAuth2 / OpenID Connect server
+            // If you wish to enable identity services, this must be called before
+            // other calls to AddAuthentication
+            var identityServerBuilder = services.AddSimpleAuthServer(this.Configuration, migrationsAssembly);
+
+            // If any of your controller endpoints will be guarded by some form of authentication
+            // You must wire up the authentication into the dependency injection system
+            // Additional services may use this builder to add additional
+            // Schemes or services
+            var authenticationBuilder = services.AddAuthentication(options => {
+                
+                // We are using a cookie to locally sign-in the user (via "Cookies" as the DefaultScheme), 
+                // and we set the DefaultChallengeScheme to oidc because when we need the user to login, 
+                // we will be using the OpenID Connect protocol.
+
+                // Use cookies as the fallback default scheme for all the other defaults.
+                // This requires a handler be wired up at some point
+                // Such as in the SimpleAuthServerUI's AddSimpleAuthServerUI call below
+                options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+
+                // If a "challenge" via ChallengeAsync is made, handle it using OpenID Connect by default
+                options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
+            });
+
+            // Uncomment in order to use AspNetIdentity
+            //services.AddSimpleMembership(this.Configuration, migrationsAssembly);
+
+            // Uncomment the following line in order to be able to use AspNetIdentity within the authorization server
+            //identityServerBuilder.AddAspNetIdentity<ApplicationUser>();
+
+            // Uncomment in order to provide the views necessary to view work with the identity server
+            //services.AddSimpleAuthServerUI(authenticationBuilder);
+
+            // Uncomment in order to use resource server
+            //services.AddSimpleResourceServer(authenticationBuilder);
+
             // As a last step allow "authorization" on the following schemes.
             // (Cookies or JWT)
             // Any controller tagged with [Authorize], can be accessed by the 
@@ -40,27 +81,26 @@ namespace Formula.MyApi
             // [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
             // [Authorize(Policy = "TrialUser")]
             // 
-            // If we are running Auth Server and Resource Server and 
+            // If we are running Auth Server and Resource Server in same location
             // https://docs.microsoft.com/en-us/aspnet/core/security/authorization/limitingidentitybyscheme?view=aspnetcore-3.1
             services.AddAuthorization( options => {
                 options.DefaultPolicy = (new AuthorizationPolicyBuilder(
                     // Used for simple OAuth2 / JWT Bearer schemes (Simple Auth Server)
-                    JwtBearerDefaults.AuthenticationScheme,
+                    JwtBearerDefaults.AuthenticationScheme
 
-                    // The following two are used when adding Auth Server UI to the project
-                    // And want to allow OpenID Connect Challenges over Cookies
-                    CookieAuthenticationDefaults.AuthenticationScheme
+                    // Used for for identity server issued cookies
+                    , CookieAuthenticationDefaults.AuthenticationScheme
+
+                    // Used for simple memberships and identities
+                    , IdentityConstants.ApplicationScheme
+
                 )).RequireAuthenticatedUser().Build();
             });
-
-            return services;
         }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            var migrationsAssembly = typeof(Startup).GetTypeInfo().Assembly.GetName().Name;
-
             services.AddCors( options =>
             {
                 options.AddPolicy( "AllowCors", builder =>
@@ -74,22 +114,7 @@ namespace Formula.MyApi
             services.AddControllers();
             services.AddRepositories();
 
-            // Uncomment in order to use AspNetIdentity
-            //services.AddSimpleMembership(this.Configuration, migrationsAssembly);
-
-            // Uncomment in order to use OAuth2 / OpenID Connect server
-            //var identityServerBuilder = services.AddSimpleAuthServer(this.Configuration, migrationsAssembly);
-
-            // Uncomment the following line in order to be able to use AspNetIdentity within the authorization server
-            //identityServerBuilder.AddAspNetIdentity<ApplicationUser>();
-
-            // Uncomment in order to provide the views necessary to view work with the identity server
-            //services.AddSimpleAuthServerUI();
-
-            // Uncomment in order to use resource server
-            //services.AddSimpleResourceServer(this.Configuration);
-
-            this.SetAuthorizationDefaults(services);
+            this.AddAuth(services);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -100,21 +125,23 @@ namespace Formula.MyApi
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
 
             app.UseRouting();
 
             app.UseCors("AllowCors");
 
-            // Uncomment in order to use OAuth2 / OpenID Connect server
-            //app.UseSimpleAuthServer(this.Configuration);
-            //app.UseSimpleAuthServerUI();
-
             // Uncomment in order to use resource server
             //app.UseSimpleResourceServer();
 
+            // Uncomment in order to use OAuth2 / OpenID Connect server
+            //app.UseSimpleAuthServer(this.Configuration);
+
+            // Uncomment if you want your auth server to provide views for log in / log out / consent etc..
+            //app.UseSimpleAuthServerUI();
+
             // Adds the authorization middleware to make sure, our API endpoint cannot be accessed by anonymous clients.
-            app.UseAuthorization();
+            //app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
