@@ -1,0 +1,184 @@
+﻿@model IndexViewModel
+@{
+    ViewData["Title"] = "Manage your account";
+}
+
+<div class="row page-header">
+    <div class="col-sm-10">
+        <h1>
+            <img class="icon" src="~/icon.jpg">
+            @ViewData["Title"]
+            <small>
+                Change your account settings                
+            </small>
+        </h1>
+        @if (!string.IsNullOrWhiteSpace(ViewData["StatusMessage"].ToString()))
+        {
+        <div class="alert alert-info" role="alert">
+            @ViewData["StatusMessage"]
+        </div>
+        }
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">General</h3>
+            </div>
+            <div class="panel-body">
+
+                <div class="row">
+                    <div class="col-xs-12">
+                        <fieldset class="well">
+                            <legend>Password</legend>
+                            <a class="btn btn-default" role="button" asp-controller="Manage" asp-action="ChangePassword">Change Password</a>
+                        </fieldset>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-xs-12">
+                        <fieldset class="well">
+                            <legend>External Logins</legend>
+                            You currently have <span class="badge">@Model.Logins.Count</span> external login providers configured.<br />
+                            <a class="btn btn-default" role="button" asp-controller="Manage" asp-action="ManageLogins">Manage</a>
+                        </fieldset>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-xs-12">
+                        <fieldset class="well">
+                            <legend>Phone Number</legend>
+
+
+                            <!--p>
+                                Phone Numbers can used as a second factor of verification in two-factor authentication.
+                                See <a href="http://go.microsoft.com/fwlink/?LinkID=532713">this article</a>
+                                for details on setting up this ASP.NET application to support two-factor authentication using SMS.
+                            </p-->
+                            <p>
+                                Your current phone number is: <strong>@(Model.PhoneNumber ?? "None")</strong>
+                            </p>
+                            @if (Model.PhoneNumber != null)
+                            {
+                                <a class="btn btn-default" role="button" asp-controller="Manage" asp-action="AddPhoneNumber">Change Phone</a>
+                                <form asp-controller="Manage" asp-action="RemovePhoneNumber" method="post" role="form">
+                                    <button class="btn btn-default" type="submit" type="submit">Remove</button>
+                                </form>
+                            }
+                            else
+                            {
+                                <a class="btn btn-default" role="button" asp-controller="Manage" asp-action="AddPhoneNumber">Add Phone</a>
+                            }
+
+                        </fieldset>
+                    </div>
+                </div>
+            </div>
+        </div>        
+    </div>
+
+    <div class="col-md-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Two Factor Authentication</h3>
+            </div>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <fieldset class="well">
+                            <legend>Status</legend>
+                            @if (Model.TwoFactor)
+                            {
+                            <div class="alert alert-success" role="alert">
+                                <Strong>Good Job!</Strong> Your account is protected by two factor authentication.
+                            </div>
+                            <form asp-controller="Manage" asp-action="DisableTwoFactorAuthentication" method="post" role="form">
+                                <button class="btn btn-default" type="submit" type="submit">Disable</button>
+                            </form>
+                            }
+                            else
+                            {
+                            <div class="alert alert-danger" role="alert">
+                                <Strong>Whoops!</Strong> Looks like you haven't enabled two factor authentication yet.
+                            </div>
+                            <p>
+                                Enabling two factor authentication adds an extra layer of security to your account.
+                                After signing in with your password (something you know), you can add a simple extra step to sign in with something in your possession (like a code retrieved from your phone).
+                            </p>
+                            <form asp-controller="Manage" asp-action="EnableTwoFactorAuthentication" method="post" class="form-horizontal" role="form">
+                                <button class="btn btn-default" type="submit" type="submit">Enable</button>
+                            </form>
+                            }
+                        </fieldset>
+                    </div>
+                </div>
+                <div clas="row">
+                    <div class="col-xs-12">
+
+                        <fieldset class="well">
+                            <legend>Authenticator App</legend>
+
+                            <p>
+                                You can set up an authenticator app on your phone by scanning a 
+                                QR barcode or manually entering a key.
+                            </p>
+                            
+                            @if (Model.AuthenticatorKey == null)
+                            {
+                                <form asp-controller="Manage" asp-action="ResetAuthenticatorKey" method="post" class="form-horizontal" role="form">
+                                    <button class="btn btn-default" type="submit" type="submit">Generate Key</button>
+                                </form>
+                            }
+                            else
+                            {
+                                <span id='authenticatorUriCode' style="display:none;">@Model.AuthenticatorUri</span>
+                                <div id='authenticatorUriCanvas'></div>
+
+                                <div class="alert alert-info" role="alert">
+                                    <strong>Authenticator Key:</strong><br />
+                                    @Model.AuthenticatorKey
+                                </div>
+                            }                            
+                        </fieldset>
+                    </div>
+                </div>
+                @if (Model.AuthenticatorKey != null)
+                {
+                <div clas="row">
+                    <div class="col-xs-12">
+                        <fieldset class="well">
+                            <legend>Recovery Codes</legend>
+                            <p>
+                                You may want generate and save some recovery codes to let you back into 
+                                your account, in the event you either lose or cannot access your device.
+                            </p>
+
+                            <form asp-controller="Manage" asp-action="GenerateRecoveryCode" method="post" class="form-horizontal" role="form">
+                                <button class="btn btn-default" type="submit" type="submit">Generate Recovery Codes</button>
+                            </form>
+                        </fieldset>
+                    </div>
+                </div>
+                }
+                <div clas="row">
+                    <div class="col-xs-12">
+                        <fieldset class="well">
+                            <legend>Suggested Apps</legend>
+                            <div class="list-group">
+                                <a href="https://www.microsoft.com/en-us/account/authenticator" target="_blank" class="list-group-item">Microsoft Authenticator</a>
+                                <a href="https://google-authenticator.com/" target="_blank" class="list-group-item">Google Authenticator</a>
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
+            </div>
+        </div>        
+    </div>
+</div>
+
+<script src="~/lib/VanillaQR.min.js"></script>
+<script src="~/js/showQR.js"></script>

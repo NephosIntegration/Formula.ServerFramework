@@ -1,0 +1,38 @@
+﻿@model SendCodeViewModel
+@{
+    ViewData["Title"] = "Send Verification Code";
+}
+
+<div class="login-page">
+    <div class="page-header">
+        <h1>@ViewData["Title"]</h1>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Select Provider</h3>
+                </div>
+                <div class="panel-body">
+                    <form asp-controller="TwoFactorAuth" asp-action="SendCode" asp-route-returnurl="@Model.ReturnUrl" method="post" role="form">
+                        <input asp-for="RememberMe" type="hidden" />
+                        <fieldset>
+                            <div class="form-group">
+                                <label asp-for="SelectedProvider">Select Method</label>
+                                <select class="form-control" asp-for="SelectedProvider" asp-items="Model.Providers"></select>
+                            </div>
+                            <div class="form-group">
+                                <button class="btn btn-primary" name="button" value="submit" type="submit">Submit</button>
+                            </div>
+                        </fieldset>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}

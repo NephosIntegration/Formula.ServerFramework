@@ -1,5 +1,10 @@
+@using IdentityServer4.Extensions
 @{
-    var version = typeof(IdentityServer4.Hosting.IdentityServerMiddleware).Assembly.GetName().Version.ToString();
+    string name = null;
+    if (!true.Equals(ViewData["signed-out"]))
+    {
+        name = Context.User?.GetDisplayName();
+    }
 }
 
 <div class="welcome-page">
@@ -7,33 +12,36 @@
         <div class="col-sm-10">
             <h1>
                 <img class="icon" src="~/icon.jpg">
-                Welcome to IdentityServer4
-                <small>(version @version)</small>
+                Welcome to Troody Auth Server
             </h1>
         </div>
     </div>
 
     <div class="row">
         <div class="col-sm-8">
+            @if (!string.IsNullOrWhiteSpace(name))
+            {
+            <p class="lead">
+                Welcome @name!
+            </p>
+            <p class="lead">
+                Use the menu above to manage your account.
+            </p>
+            }
+            else
+            {
+            <p class="lead">
+                Click <a class="btn btn-default" href="~/Account/Login" role="button">here</a> to log in.
+            </p>
+            <p class="lead">
+                This service provides identity and access control, including single sign-on, identity management, authorization and API security for your applications. 
+            </p>
             <p>
-                IdentityServer publishes a
+                Troody Auth Server publishes a
                 <a href="~/.well-known/openid-configuration">discovery document</a>
                 where you can find metadata and links to all the endpoints, key material, etc.
             </p>
-        </div>
-        <div class="col-sm-8">
-            <p>
-                Click <a href="~/grants">here</a> to manage your stored grants.
-            </p>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-sm-8">
-            <p>
-                Here are links to the
-                <a href="https://github.com/identityserver/IdentityServer4">source code repository</a>,
-                and <a href="https://github.com/IdentityServer/IdentityServer4/tree/master/samples">ready to use samples</a>.
-            </p>
+            }
         </div>
     </div>
 </div>

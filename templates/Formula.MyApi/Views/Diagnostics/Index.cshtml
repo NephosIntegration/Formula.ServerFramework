@@ -1,32 +1,70 @@
 @model DiagnosticsViewModel
 
-<h1>Authentication cookie</h1>
-
-<h3>Claims</h3>
-<dl>
-    @foreach (var claim in Model.AuthenticateResult.Principal.Claims)
-    {
-        <dt>@claim.Type</dt>
-        <dd>@claim.Value</dd>
-    }
-</dl>
-
-<h3>Properties</h3>
-<dl>
-    @foreach (var prop in Model.AuthenticateResult.Properties.Items)
-    {
-        <dt>@prop.Key</dt>
-        <dd>@prop.Value</dd>
-    }
-</dl>
+<div class="page-header">
+  <h1>Authentication Cookie</h1>
+</div>
 
 @if (Model.Clients.Any())
 {
-    <h3>Clients</h3>
-    <ul>
+    <div class="list-group">
+        <a href="#" class="list-group-item active">
+            <h4 class="list-group-item-heading">Clients</h4>
+            <p class="list-group-item-text">List of client applications you are currently logged into.</p>
+        </a>
         @foreach (var client in Model.Clients)
         {
-            <li>@client</li>
+            <a href="#" class="list-group-item">@client</a>
         }
-    </ul>
+    </div>
 }
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">Claims</h3>
+    </div>
+    <div class="panel-body">
+        <table class="table table-striped table-hover table-responsive table-condensed">
+            <thead>
+                <tr>
+                    <th>Type</th>
+                    <th>Value</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var claim in Model.AuthenticateResult.Principal.Claims)
+                {
+                <tr>
+                    <td>@claim.Type</td>
+                    <td>@claim.Value</td>
+                </tr>
+                }
+            </tbody>
+        </table>        
+    </div>
+</div>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">Properties</h3>
+    </div>
+    <div class="panel-body">
+        <table class="table table-striped table-hover table-responsive table-condensed">
+            <thead>
+                <tr>
+                    <th>Key</th>
+                    <th>Value</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var prop in Model.AuthenticateResult.Properties.Items)
+                {
+                <tr>
+                    <td>@prop.Key</td>
+                    <td>@prop.Value</td>
+                </tr>
+                }
+            </tbody>
+        </table>        
+    </div>
+</div>
+
