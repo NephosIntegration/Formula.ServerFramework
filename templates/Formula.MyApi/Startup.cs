@@ -125,7 +125,10 @@ namespace Formula.MyApi
                 app.UseDeveloperExceptionPage();
             }
 
-            //app.UseHttpsRedirection();
+            if (bool.Parse(this.Configuration.GetValue<String>("EnableHTTPS")))
+            {
+                app.UseHttpsRedirection();
+            }
 
             app.UseRouting();
 
